@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { View, Text } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { getThemeColors } from '../utils/colors';
 
@@ -24,8 +25,19 @@ import AdminProfileScreen from '../screens/admin/AdminProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
+const LoadingScreen = () => (
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text>Loading...</Text>
+  </View>
+);
+
 const BottomTabNavigator = () => {
-  const { userType } = useAuth();
+  const { userType, isLoading } = useAuth();
+  
+  if (isLoading || !userType) {
+    return <LoadingScreen />;
+  }
+
   const themeColors = getThemeColors(userType);
 
   const getScreens = () => {
@@ -57,6 +69,10 @@ const BottomTabNavigator = () => {
   };
 
   const screens = getScreens();
+
+  if (screens.length === 0) {
+    return <LoadingScreen />;
+  }
 
   return (
     <Tab.Navigator

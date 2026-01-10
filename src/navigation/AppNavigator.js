@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../context/AuthContext';
@@ -9,18 +9,37 @@ const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   const { userType, isLoading } = useAuth();
+  const navigationRef = React.useRef();
+
+  useEffect(() => {
+    if (!userType && navigationRef.current) {
+      // Reset navigation stack when user logs out
+      navigationRef.current.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    }
+  }, [userType]);
 
   if (isLoading) {
     return null; // You can add a loading screen here
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {userType ? (
-          <Stack.Screen name="Main" component={BottomTabNavigator} />
+          <Stack.Screen 
+            name="Main" 
+            component={BottomTabNavigator}
+            options={{ animationEnabled: false }}
+          />
         ) : (
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen 
+            name="Login" 
+            component={LoginScreen}
+            options={{ animationEnabled: false }}
+          />
         )}
       </Stack.Navigator>
     </NavigationContainer>
