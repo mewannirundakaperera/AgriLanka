@@ -1,7 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { getThemeColors } from '../utils/colors';
 
@@ -33,7 +34,8 @@ const LoadingScreen = () => (
 
 const BottomTabNavigator = () => {
   const { userType, isLoading } = useAuth();
-  
+  const insets = useSafeAreaInsets();
+
   if (isLoading || !userType) {
     return <LoadingScreen />;
   }
@@ -88,8 +90,8 @@ const BottomTabNavigator = () => {
           backgroundColor: '#fff',
           borderTopWidth: 1,
           borderTopColor: '#e5e7eb',
-          height: 60,
-          paddingBottom: 8,
+          height: 60 + insets.bottom,
+          paddingBottom: insets.bottom + 8,
           paddingTop: 8,
         },
         tabBarLabelStyle: {

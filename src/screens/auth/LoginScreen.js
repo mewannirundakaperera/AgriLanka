@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   View,
@@ -11,16 +11,22 @@ import { useAuth } from '../../context/AuthContext';
 import { USER_TYPES } from '../../utils/constants';
 import { COLORS } from '../../utils/colors';
 
-const LoginScreen = () => {
-  const { login } = useAuth();
+const LoginScreen = ({ navigation }) => {
+  const { savedAccounts } = useAuth();
+  const [selectedUserType, setSelectedUserType] = useState(null);
 
-  const handleLogin = (type) => {
-    const userData = {
-      name: type === USER_TYPES.FARMER ? 'Silva Farms' : 
-            type === USER_TYPES.SUPERMARKET ? 'Keells Super' : 'Admin User',
-      location: type === USER_TYPES.FARMER ? 'Nuwara Eliya' : 'Colombo',
-    };
-    login(type, userData);
+  const handleUserTypeSelect = (type) => {
+    setSelectedUserType(type);
+    // Check if there are saved accounts for this user type
+    const accountsForType = savedAccounts.filter(acc => acc.userType === type);
+    
+    if (accountsForType.length > 0) {
+      // Navigate to saved accounts screen
+      navigation.navigate('SavedAccounts', { userType: type });
+    } else {
+      // Navigate to login form
+      navigation.navigate('LoginForm', { userType: type });
+    }
   };
 
   return (
@@ -37,7 +43,7 @@ const LoginScreen = () => {
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={[styles.button, { backgroundColor: COLORS.farmer.primary }]}
-            onPress={() => handleLogin(USER_TYPES.FARMER)}
+            onPress={() => handleUserTypeSelect(USER_TYPES.FARMER)}
           >
             <Ionicons name="people" size={24} color="#fff" />
             <Text style={styles.buttonText}>Login as Farmer</Text>
@@ -45,7 +51,7 @@ const LoginScreen = () => {
 
           <TouchableOpacity
             style={[styles.button, { backgroundColor: COLORS.supermarket.primary }]}
-            onPress={() => handleLogin(USER_TYPES.SUPERMARKET)}
+            onPress={() => handleUserTypeSelect(USER_TYPES.SUPERMARKET)}
           >
             <Ionicons name="storefront" size={24} color="#fff" />
             <Text style={styles.buttonText}>Login as Supermarket</Text>
@@ -53,7 +59,7 @@ const LoginScreen = () => {
 
           <TouchableOpacity
             style={[styles.button, { backgroundColor: COLORS.admin.primary }]}
-            onPress={() => handleLogin(USER_TYPES.ADMIN)}
+            onPress={() => handleUserTypeSelect(USER_TYPES.ADMIN)}
           >
             <Ionicons name="shield-checkmark" size={24} color="#fff" />
             <Text style={styles.buttonText}>Login as Admin</Text>
