@@ -16,4 +16,5 @@ export const STORAGE_KEYS = {
   USER_TYPE: '@agrilanka_user_type',
   USER_DATA: '@agrilanka_user_data',
   AUTH_TOKEN: '@agrilanka_auth_token',
+  SAVED_ACCOUNTS: '@agrilanka_saved_accounts',
 };
